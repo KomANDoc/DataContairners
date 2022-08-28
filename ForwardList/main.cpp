@@ -21,13 +21,52 @@ public:
 	}
 	friend class ForwardList;
 
-	int get_data()const
+	const int& get_data()const
 	{
 		return Data;
+	}
+	Element* get_pNext()const
+	{
+		return pNext;
 	}
 };
 int Element::count = 0;
 
+
+
+class Iterator
+{
+	Element* Temp;
+public:
+	Iterator(Element* Temp = nullptr) : Temp(Temp)
+	{
+		cout << "ITConstructor:\t" << this << endl;
+	}
+	~Iterator()
+	{
+		cout << "ITDestructor:\t" << this << endl;
+	}
+
+	// Operators
+
+	Iterator operator++()
+	{
+		Temp = Temp->get_pNext();
+		return *this;
+	}
+	bool operator== (const Iterator& other)const
+	{
+		return this->Temp == other.Temp;
+	}
+	bool operator!= (const Iterator& other)const
+	{
+		return this->Temp != other.Temp;
+	}
+	const int& operator*()const
+	{
+		return Temp->get_data();
+	}
+};
 
 
 
@@ -50,6 +89,14 @@ public:
 		{
 			push_back(*it);
 		}
+	}
+	ForwardList(const ForwardList& other) : ForwardList()
+	{
+		*this = other;
+	}
+	ForwardList(ForwardList&& other) : ForwardList()
+	{
+		*this = std::move(other);
 	}
 	~ForwardList()
 	{
@@ -138,24 +185,48 @@ public:
 		cout << "Общее количество элементов: " << Element::count << endl;
 		cout << "Количество элементов списка: " << size << endl;
 	}
-	/////// Operator
-	ForwardList operator= (const ForwardList other)
+	Iterator begin()
 	{
-		int* arr = new int[other.size];
-		Element* Temp = other.Head;
-		for (int i = 0; i < size;i++)
+		return Head;
+	}
+	Iterator end()
+	{
+		return nullptr;
+	}
+	/////// Operator
+	ForwardList& operator= (const ForwardList& other)
+	{
+		if (this == &other)return *this;
+		while (Head)pop_front();
+		for (Element* Temp = other.Head; Temp; Temp = Temp->pNext)
 		{
-			arr[i] = Temp->Data;
-			Temp = Temp->pNext;
-			this->push_front(arr[i]);
+			push_back(Temp->Data);
 		}
-		delete[] arr;
+		return *this;
+	}
+	ForwardList& operator= (ForwardList&& other)
+	{
+		if (this == &other)return *this;
+		while (Head)pop_front();
+		this->Head = other.Head;
+		this->size = other.size;
+
+		other.Head = nullptr;
+		other.size = 0;
+		return *this;
 	}
 };
 
-
+ForwardList operator+(const ForwardList& left, const ForwardList& right)
+{
+	ForwardList cat = left;
+	for (Element* Temp = right.get_head(); Temp; Temp = Temp->get_pNext())
+		cat.push_back(Temp->get_data());
+	return cat;
+}
 //#define BASE_CHECK
 //#define RANGE_BESED_FOR_ARRAY
+//#define PLUS_CHECK
 
 void main()
 {
@@ -191,6 +262,19 @@ void main()
 	cout << endl;
 #endif // 
 
+#ifdef PLUS_CHECK
 	ForwardList list5 = { 3,5,8,13,21 };
 	list5.print();
+	ForwardList list4 = { 3,5,8,13,21 };
+	list4.print();
+	ForwardList list20 = list4 + list5;
+	list20.print();
+#endif // PLUS_CHECK
+
+	ForwardList list6 = { 3,5,8,13,21 };
+	for (int i : list6)
+	{
+		cout << i << "\t";
+	}
+	cout << endl;
 }
