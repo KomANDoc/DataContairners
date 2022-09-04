@@ -277,4 +277,6 @@ void main()
 		cout << i << "\t";
 	}
 	cout << endl;
+
+
 }

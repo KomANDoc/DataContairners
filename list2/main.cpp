@@ -17,12 +17,58 @@ class List
 		{
 			cout << "EDestructor:\t" << this << endl;
 		}
+
 		friend class List;
+		friend class Iterator;
 
-
-
+		const int& get_data()const
+		{
+			return Data;
+		}
+		Element* get_pNext()const
+		{
+			return pNext;
+		}
+		Element* get_pPrev()const
+		{
+			return pPrev;
+		}
 	}*Head, *Tail;
+	class Iterator
+	{
+		Element* Temp;
+	public:
+		Iterator(Element* Temp = nullptr) : Temp(Temp)
+	{
+		cout << "ITConstructor:\t" << this << endl;
+	}
+		~Iterator()
+	{
+		cout << "ITDestructor:\t" << this << endl;
+	}
+	
+		// Operators
+	
+		Iterator operator++()
+	{
+		Temp = Temp->get_pNext();
+		return *this;
+	}
+		bool operator== (const Iterator& other)const
+	{
+		return this->Temp == other.Temp;
+	}
+		bool operator!= (const Iterator& other)const
+	{
+		return this->Temp != other.Temp;
+	}
+		const int& operator*()const
+	{
+		return Temp->get_data();
+	}
+	};
 	size_t size;
+
 public:
 	List()
 	{
@@ -30,6 +76,22 @@ public:
 		Tail = nullptr;
 		size = 0;
 		cout << "LConstructor:\t" << this << endl;
+	}
+	List(const std::initializer_list<int>& il) :List()
+	{
+		cout << typeid(il.begin()).name() << endl;
+		for (int const* it = il.begin(); it != il.end(); it++)
+		{
+			push_back(*it);
+		}
+	}
+	List(const List& other)
+	{
+		*this = other;
+	}
+	List(List&& other) : List()
+	{
+		*this = std::move(other);
 	}
 	~List()
 	{
@@ -45,10 +107,12 @@ public:
 			size++;
 			return;
 		}
-		Element* New = new Element(Data);
-		New->pNext = Head;
-		Head->pPrev = New;
-		Head = New;
+		//Element* New = new Element(Data);
+		//New->pNext = Head;
+		//Head->pPrev = New;
+		//Head = New;
+		  Head = new Element(Data, Head);
+		
 		size++;
 	}
 	void push_back(int Data)
@@ -135,6 +199,16 @@ public:
 		delete Temp;
 		size--;
 	}
+	//get methods
+
+	Element* get_Head()const
+	{
+		return Head;
+	}
+	Element* get_Tail()const
+	{
+		return Tail;
+	}
 
 	// methods
 	void print()const
@@ -153,7 +227,45 @@ public:
 		}
 		cout << "Количество элементов в списке: " << size << endl;
 	}
+
+	//operators
+	List& operator= (const List& other)
+	{
+		if (this == &other)return *this;
+		while (Head)pop_front();
+		for (Element* Temp = other.Head; Temp; Temp = Temp->pNext)
+		{
+			push_back(Temp->Data);
+		}
+		return *this;
+	}
+	List& operator= (List&& other)
+	{
+		if (this == &other)return *this;
+		while (Head)pop_front();
+		this->Head = other.Head;
+		this->Tail = other.Tail;
+		this->size = other.size;
+
+		other.Head = nullptr;
+		other.Tail = nullptr;
+		other.size = 0;
+		return *this;
+	}
+
+	Iterator begin()
+	{
+		return Head;
+	}
+	Iterator end()
+	{
+		return nullptr;
+	}
 };
+
+
+
+
 
 void main()
 {
@@ -164,12 +276,23 @@ void main()
 	List list;
 	for (int i = 0; i < n; i++)
 	{
-		//list.push_front(rand() % 100);
-		list.push_back(rand() % 100);
+		list.push_front(rand() % 100);
+		//list.push_back(rand() % 100);
 	}
 	list.print();
-	//list.insert(rand() % 100, 5);
-	//list.print();
-	list.erase(5);
-	list.print();
+
+
+	for (int i : list)
+	{
+		cout << i << "\t";
+	}
+	cout << endl;
+
+	//задание с выводом в main
+
+	//for (List::Element* Temp = list.get_Tail(); Temp; Temp = Temp->get_pPrev())
+	//{
+	//	
+	//}
+	//
 }
