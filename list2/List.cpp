@@ -10,18 +10,7 @@ template<typename T>List<T>::Element::~Element()
 {
 	cout << "EDestructor:\t" << this << endl;
 }
-template<typename T>const int& List<T>::Element::get_data()const
-{
-	return Data;
-}
-template<typename T> List<T>::Element* List<T>::Element::get_pNext()const
-{
-	return pNext;
-}
-template<typename T> List<T>::Element* List<T>::Element::get_pPrev()const
-{
-	return pPrev;
-}
+
 ///////////////////
 ///////CONST_BASE_I
 template<typename T>List<T>::ConstBaseIterator::ConstBaseIterator(Element* Temp) :Temp(Temp)
@@ -111,13 +100,13 @@ template<typename T>List<T>::ConstIterator::~ConstIterator()
 
 template<typename T>typename List<T>::ConstIterator& List<T>::ConstIterator::operator++()
 {
-	ConstBaseIterator::Temp = ConstBaseIterator::Temp->get_pNext();
+	ConstBaseIterator::Temp = ConstBaseIterator::Temp->pNext;
 	return *this;
 }
 template<typename T>typename List<T>::ConstIterator List<T>::ConstIterator::operator++(int)
 {
 	ConstIterator old = *this;
-	ConstBaseIterator::Temp = ConstBaseIterator::Temp->get_pNext();
+	ConstBaseIterator::Temp = ConstBaseIterator::Temp->pNext;
 	return old;
 }
 template<typename T>typename List<T>::ConstIterator& List<T>::ConstIterator::operator--()
@@ -251,7 +240,7 @@ template<typename T>void List<T>::pop_back()
 	Tail->pNext = nullptr;
 	size--;
 }
-template<typename T>void List<T>::erase(int index)
+template<typename T>void List<T>::erase(int Index)
 {
 	if (Index >= size)return;
 	if (Index == size - 1) return pop_back();
@@ -271,20 +260,6 @@ template<typename T>void List<T>::erase(int index)
 	Temp->pNext->pPrev = Temp->pPrev;
 	delete Temp;
 	size--;
-}
-//get methods
-
-template<typename T> List<T>::Element* List<T>::get_Head()const
-{
-	return Head;
-}
-template<typename T> List<T>::Element* List<T>::get_Tail()const
-{
-	return Tail;
-}
-template<typename T> size_t  List<T>::get_Size()const
-{
-	return size;
 }
 
 // methods

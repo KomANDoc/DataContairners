@@ -17,10 +17,6 @@ class List
 
 		friend class List;
 		friend class ConstIterator;
-
-		const int& get_data()const;
-		Element* get_pNext()const;
-		Element* get_pPrev()const;
 	}*Head, * Tail;
 	size_t size;
 	class ConstBaseIterator
